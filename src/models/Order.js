@@ -1,5 +1,5 @@
 const { INTEGER, STRING } = require("sequelize");
-const sequelize = require(".");
+const sequelize = require("./connectDB");
 const Food = require("./Food");
 const User = require("./User");
 

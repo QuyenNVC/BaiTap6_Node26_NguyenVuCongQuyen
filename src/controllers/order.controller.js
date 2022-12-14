@@ -1,15 +1,16 @@
+const { response } = require("../helpers/response");
 const { order } = require("../services/orders.service");
 
 const orderController = {
   order: () => {
-    return async (req, res) => {
+    return async (req, res, next) => {
       try {
         const userId = Number(req.headers.userid);
         const data = req.body;
         const result = await order(userId, data);
-        res.status(200).json({ data: result });
+        res.status(200).json(response(result));
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
       }
     };
   },

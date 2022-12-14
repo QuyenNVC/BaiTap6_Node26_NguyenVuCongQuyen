@@ -1,36 +1,37 @@
 const rateService = require("../services/rates.service");
+const { response } = require("../helpers/response");
 const rateController = {
   getRatesByRestaurant: () => {
-    return async (req, res) => {
+    return async (req, res, next) => {
       try {
         const { restaurantId } = req.params;
         const data = await rateService.getRatesByRestaurant(restaurantId);
-        res.status(200).json({ data: data });
+        res.status(200).json(response(data));
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
       }
     };
   },
   getRatesByUser: () => {
-    return async (req, res) => {
+    return async (req, res, next) => {
       try {
         const { userId } = req.params;
         const data = await rateService.getRatesByUser(userId);
-        res.status(200).json({ data: data });
+        res.status(200).json(response(data));
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
       }
     };
   },
   rate: () => {
-    return async (req, res) => {
+    return async (req, res, next) => {
       try {
         const userId = Number(req.headers.userid);
         const data = req.body;
         const result = await rateService.rateRestaurant(userId, data);
-        res.status(200).json({ data: result });
+        res.status(200).json(response(result));
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
       }
     };
   },

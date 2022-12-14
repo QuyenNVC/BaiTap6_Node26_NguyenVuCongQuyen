@@ -1,21 +1,18 @@
+const { AppError } = require("../helpers/error");
 const Rate = require("../models/Rate");
 const Restaurant = require("../models/Restaurant");
 const User = require("../models/User");
 
 async function getRatesByRestaurant(restaurantId) {
   try {
-    const restaurant = await Restaurant.findByPk(restaurantId);
+    const restaurant = await Restaurant.findByPk(restaurantId, {
+      include: "ratedUsers",
+    });
     if (!restaurant) {
-      throw new Error("Nhà hàng không tồn tại");
+      throw new AppError(400, "Nhà hàng không tồn tại");
     }
 
-    const result = await Rate.findAll({
-      where: {
-        resId: restaurantId,
-      },
-    });
-
-    return result;
+    return restaurant.ratedUsers;
   } catch (error) {
     throw error;
   }
@@ -23,18 +20,14 @@ async function getRatesByRestaurant(restaurantId) {
 
 async function getRatesByUser(userId) {
   try {
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, {
+      include: "ratedRestaurants",
+    });
     if (!user) {
-      throw new Error("Người dùng không tồn tại");
+      throw new AppError(400, "Người dùng không tồn tại");
     }
 
-    const result = await Rate.findAll({
-      where: {
-        userId,
-      },
-    });
-
-    return result;
+    return user.ratedRestaurants;
   } catch (error) {
     throw error;
   }
@@ -45,16 +38,16 @@ async function rateRestaurant(userId, data) {
     const { restaurantId, amount } = data;
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error("Người dùng không tồn tại!");
+      throw new AppError(400, "Người dùng không tồn tại!");
     }
 
     const restaurant = await Restaurant.findByPk(restaurantId);
     if (!restaurant) {
-      throw new Error("Nhà hàng không tồn tại!");
+      throw new AppError(400, "Nhà hàng không tồn tại!");
     }
 
     if (!amount || isNaN(amount)) {
-      throw new Error("Điểm đánh giá không tồn tại!");
+      throw new AppError(400, "Điểm đánh giá không tồn tại!");
     }
 
     const rate = await Rate.findOne({
@@ -64,7 +57,7 @@ async function rateRestaurant(userId, data) {
       },
     });
     if (rate) {
-      throw new Error("Người dùng đã đánh giá nhà hàng!");
+      throw new AppError(400, "Người dùng đã đánh giá nhà hàng!");
     }
 
     const result = await Rate.create({

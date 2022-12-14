@@ -1,5 +1,7 @@
 const { DataTypes, NOW } = require("sequelize");
-const sequelize = require(".");
+const sequelize = require("./connectDB");
+const Restaurant = require("./Restaurant");
+const User = require("./User");
 
 const Rate = sequelize.define(
   "Rate",
@@ -8,11 +10,21 @@ const Rate = sequelize.define(
       type: DataTypes.INTEGER,
       field: "user_id",
       allowNull: false,
+      primaryKey: true,
+      references: {
+        model: User,
+        key: "userId",
+      },
     },
     resId: {
       type: DataTypes.INTEGER,
       field: "res_id",
       allowNull: false,
+      primaryKey: true,
+      references: {
+        model: Restaurant,
+        key: "resId",
+      },
     },
     amount: {
       type: DataTypes.INTEGER,

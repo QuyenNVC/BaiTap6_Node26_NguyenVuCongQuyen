@@ -7,7 +7,7 @@ async function order(userId, data) {
   try {
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error("Người dùng không tồn tại!");
+      throw new AppError(400, "Người dùng không tồn tại!");
     }
     const code = new Date().getTime();
 

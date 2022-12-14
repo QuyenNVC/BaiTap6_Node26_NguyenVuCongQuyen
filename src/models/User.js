@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require(".");
+const sequelize = require("./connectDB");
 const Food = require("./Food");
 const Order = require("./Order");
 
@@ -44,16 +44,16 @@ const User = sequelize.define(
   }
 );
 
-User.belongsToMany(Food, {
-  through: "order",
-  foreignKey: "user_id",
-  otherKey: "food_id",
-});
+// User.belongsToMany(Food, {
+//   through: "order",
+//   foreignKey: "user_id",
+//   otherKey: "food_id",
+// });
 
-Food.belongsToMany(User, {
-  through: "order",
-  foreignKey: "food_id",
-  otherKey: "user_id",
-});
+// Food.belongsToMany(User, {
+//   through: "order",
+//   foreignKey: "food_id",
+//   otherKey: "user_id",
+// });
 
 module.exports = User;

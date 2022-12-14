@@ -1,5 +1,7 @@
 const { DataTypes, NOW } = require("sequelize");
-const sequelize = require(".");
+const sequelize = require("./connectDB");
+const Restaurant = require("./Restaurant");
+const User = require("./User");
 
 const Like = sequelize.define(
   "Like",
@@ -8,11 +10,21 @@ const Like = sequelize.define(
       type: DataTypes.INTEGER,
       field: "user_id",
       allowNull: false,
+      primaryKey: true,
+      references: {
+        model: User,
+        key: "userId",
+      },
     },
     resId: {
       type: DataTypes.INTEGER,
       field: "res_id",
       allowNull: false,
+      primaryKey: true,
+      references: {
+        model: Restaurant,
+        key: "resId",
+      },
     },
     dateLike: {
       type: DataTypes.DATE,
@@ -26,6 +38,5 @@ const Like = sequelize.define(
     timestamps: false,
   }
 );
-Like.removeAttribute("id");
 
 module.exports = Like;
