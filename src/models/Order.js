@@ -10,20 +10,20 @@ const Order = sequelize.define(
       field: "user_id",
       type: INTEGER,
       allowNull: false,
-      references: {
-        model: User,
-        key: "userId",
-      },
+      // references: {
+      //   model: User,
+      //   key: "userId",
+      // },
       primaryKey: true,
     },
     foodId: {
       field: "food_id",
       type: INTEGER,
       allowNull: false,
-      references: {
-        model: Food,
-        key: "foodId",
-      },
+      // references: {
+      //   model: Food,
+      //   key: "foodId",
+      // },
       primaryKey: true,
     },
     amount: {
@@ -32,7 +32,7 @@ const Order = sequelize.define(
     },
     code: {
       type: STRING(255),
-      unique: true,
+      // unique: true,
       allowNull: false,
     },
     arrSubId: {

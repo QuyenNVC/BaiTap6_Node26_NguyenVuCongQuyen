@@ -26,6 +26,12 @@ const User = sequelize.define(
     password: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      set(value) {
+        const salt = bcrypt.genSaltSync();
+        const hashedPassword = bcrypt.hashSync(value, salt);
+        // password ở đây là tên property chứ không phải tên cột
+        this.setDataValue("password", hashedPassword);
+      },
     },
   },
   {

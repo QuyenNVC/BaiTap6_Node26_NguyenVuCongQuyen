@@ -26,10 +26,10 @@ const SubFood = sequelize.define(
       field: "food_id",
       type: INTEGER,
       allowNull: false,
-      references: {
-        model: Food,
-        key: "foodId",
-      },
+      // references: {
+      //   model: Food,
+      //   key: "foodId",
+      // },
     },
   },
   {

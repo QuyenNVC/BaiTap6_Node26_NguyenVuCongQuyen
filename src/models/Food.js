@@ -33,10 +33,10 @@ const Food = sequelize.define(
       field: "type_id",
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: FoodType,
-        key: "typeId",
-      },
+      // references: {
+      //   model: FoodType,
+      //   key: "typeId",
+      // },
     },
   },
   {

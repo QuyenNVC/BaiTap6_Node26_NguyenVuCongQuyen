@@ -6,11 +6,18 @@ const User = require("../models/User");
 async function getLikesByUser(userId) {
   try {
     const user = await User.findByPk(userId, {
-      include: "likedRestaurants",
+      include: {
+        association: "likedRestaurants",
+        through: {
+          attributes: [],
+        },
+      },
     });
+
     if (!user) {
-      throw new AppError(400, "Người dùng không tồn tại!");
+      throw new AppError(400, "Người dùng không tồn tại");
     }
+
     return user.likedRestaurants;
   } catch (error) {
     throw error;
@@ -20,11 +27,18 @@ async function getLikesByUser(userId) {
 async function getLikesByRestaurant(restaurantId) {
   try {
     const restaurant = await Restaurant.findByPk(restaurantId, {
-      include: "likedUsers",
+      include: {
+        association: "likedUsers",
+        through: {
+          attributes: [],
+        },
+      },
     });
+
     if (!restaurant) {
-      throw new AppError(400, "Restaurant không tồn tại!");
+      throw new AppError(400, "Nhà hàng không tồn tại");
     }
+
     return restaurant.likedUsers;
   } catch (error) {
     throw error;
@@ -43,21 +57,15 @@ async function likeRestaurant(userId, restaurantId) {
       throw new AppError(400, "Nhà hàng không tồn tại!");
     }
 
-    const like = await Like.findOne({
-      where: {
-        userId,
-        resId: restaurantId,
-      },
-    });
-    if (like) {
-      throw new AppError(400, "Người dùng đã like nhà hàng!");
-    }
+    // console.log(restaurant.__proto__);
 
-    const result = await Like.create({
-      userId,
-      resId: restaurantId,
-    });
-    return result;
+    const hasLiked = await restaurant.hasLikedUser(userId);
+    if (hasLiked) {
+      throw new AppError(400, "Người dùng đã like nhà hàng!");
+    } else {
+      const result = await restaurant.addLikedUser(userId);
+      return result;
+    }
   } catch (error) {
     throw error;
   }
@@ -75,23 +83,13 @@ async function unlikeRestaurant(userId, restaurantId) {
       throw new AppError(400, "Nhà hàng không tồn tại!");
     }
 
-    const like = await Like.findOne({
-      where: {
-        userId,
-        resId: restaurantId,
-      },
-    });
-    if (!like) {
-      throw new AppError(400, "Người dùng chưa like nhà hàng!");
+    const hasLiked = await restaurant.hasLikedUser(userId);
+    if (!hasLiked) {
+      throw new AppError(400, "Người dùng đã chưa nhà hàng!");
+    } else {
+      await restaurant.removeLikedUser(userId);
+      return true;
     }
-
-    await Like.destroy({
-      where: {
-        userId,
-        resId: restaurantId,
-      },
-    });
-    return true;
   } catch (error) {
     throw error;
   }

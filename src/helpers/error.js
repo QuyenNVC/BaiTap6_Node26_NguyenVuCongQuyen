@@ -6,7 +6,7 @@ class AppError extends Error {
 }
 
 const handleError = (err, req, res, next) => {
-  // throw err;
+  throw err;
   if (!(err instanceof AppError)) {
     err = new AppError(500, "Something when wrong");
   }

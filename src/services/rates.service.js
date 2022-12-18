@@ -6,8 +6,11 @@ const User = require("../models/User");
 async function getRatesByRestaurant(restaurantId) {
   try {
     const restaurant = await Restaurant.findByPk(restaurantId, {
-      include: "ratedUsers",
+      include: {
+        association: "ratedUsers",
+      },
     });
+
     if (!restaurant) {
       throw new AppError(400, "Nhà hàng không tồn tại");
     }
@@ -21,8 +24,11 @@ async function getRatesByRestaurant(restaurantId) {
 async function getRatesByUser(userId) {
   try {
     const user = await User.findByPk(userId, {
-      include: "ratedRestaurants",
+      include: {
+        association: "ratedRestaurants",
+      },
     });
+
     if (!user) {
       throw new AppError(400, "Người dùng không tồn tại");
     }
@@ -50,22 +56,18 @@ async function rateRestaurant(userId, data) {
       throw new AppError(400, "Điểm đánh giá không tồn tại!");
     }
 
-    const rate = await Rate.findOne({
-      where: {
-        userId,
-        resId: restaurantId,
-      },
-    });
-    if (rate) {
-      throw new AppError(400, "Người dùng đã đánh giá nhà hàng!");
-    }
+    const hasRated = await user.hasRatedRestaurant(restaurantId);
 
-    const result = await Rate.create({
-      userId,
-      resId: restaurantId,
-      amount,
-    });
-    return result;
+    if (hasRated) {
+      throw new AppError(400, "Người dùng đã đánh giá nhà hàng!");
+    } else {
+      const result = await Rate.create({
+        resId: restaurantId,
+        userId,
+        amount,
+      });
+      return result;
+    }
   } catch (error) {
     throw error;
   }

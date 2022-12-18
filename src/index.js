@@ -3,7 +3,9 @@ const { handleError } = require("./helpers/error");
 const { sequelize } = require("./models");
 const v1 = require("./routes/v1");
 
-sequelize.sync();
+sequelize.sync({
+  // alter: true,
+});
 const app = express();
 const port = 4000;
 
